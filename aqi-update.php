@@ -16,7 +16,7 @@ function getData ($year, $mon, $day, $dom, $pol)
     $res = curl_exec ($ch) ;
     curl_close ($ch) ;
 
-    foreach (explode ('\n', $res) as $line)
+    foreach (explode ("\n", $res) as $line)
     {
         preg_match ('/\s*([\w\d_]+)'
                    .'\s+(\d+)\.\s+\d+'
