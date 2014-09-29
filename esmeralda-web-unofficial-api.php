@@ -2,7 +2,7 @@
 
 function localDataURL ($year, $mon, $day)
 {
-    return sprintf ('data/%d%02d%02d.dat', $year, $mon, $day) ;
+    return sprintf ('/data/conc/%d%02d%02d.dat', $year, $mon, $day) ;
 }
 
 /* Generate URL to fetch according to date, domain and pollutant. */
