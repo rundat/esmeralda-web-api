@@ -1,0 +1,12 @@
+= Esmeralda-web unofficial api =
+
+[[2 || Esmeralda logo]]
+
+== What can it do? ==
+
+- Save data from [[1 << esmeralda-web]].
+- Filter data and return it as JSON.
+
+
+[[1]] :: [[ http://www.esmeralda-web.fr ]]
+[[2]] :: [[ http://www.esmeralda-web.fr/images/logo.jpg ]]
