@@ -87,14 +87,34 @@ function saveData ($year, $mon, $day)
 function getData ($year, $mon, $day, $stations, $pollutants)
 {
     $filename = localDataURL ($year, $mon, $day) ;
-    if (!file_exists ($filename)
-        && !saveData ($year, $mon, $day))
+    if (!file_exists ($filename) && !saveData ($year, $mon, $day))
     {
         return NULL ;
     }
     $db = unserialize (file_get_contents ($filename));
 
+    $selected_stations = [] ;
+
+    /* Station may be a station name or a regexp. */
     foreach ($stations as $station)
+    {
+        if (!empty ($db [$station]))
+        {
+            $selected_stations [] = $station ;
+        }
+        else
+        {
+            foreach ($db as $db_station => $_)
+            {
+                if (preg_match ($station, $db_station) === 1)
+                {
+                    $selected_stations [] = $db_station ;
+                }
+            }
+        }
+    }
+
+    foreach ($selected_stations as $station)
     {
         foreach ($pollutants as $pollutant)
         {
@@ -104,6 +124,7 @@ function getData ($year, $mon, $day, $stations, $pollutants)
             }
         }
     }
+
     return $data;
 }
 
@@ -111,7 +132,9 @@ function main ()
 {
     global $POLLUTANTS ;
 
-    $stations = explode (',', $_GET ['s']) ;
+    $stations = (isset ($_GET ['s'])) ?
+                (explode (',', $_GET ['s'])) :
+                ['/.*/'];
 
     $pollutants = (isset ($_GET ['p']) ?
                    (explode (',', $_GET ['p'])) :

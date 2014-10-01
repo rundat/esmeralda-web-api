@@ -12,8 +12,9 @@
 Make a GET request with the following optional parameters:
 
 - ``d``: the date, formated as ``Y-m-d``. Default is current time.
-- ``s``: comma-separated stations list.
-- ``p``: comma-separated pollutants list. Default select all.
+- ``s``: comma-separated stations list. You may use PCRE regexp instead
+  of real station names. Default selects all.
+- ``p``: comma-separated pollutants list. Default selects all.
 
 Example:
 ``` [...]?d=2014-10-01&s=idf3.Paris_18,idf3.Paris_12&p=PM10,NO2 ```
