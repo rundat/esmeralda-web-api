@@ -1,8 +1,14 @@
 <?php
 
+$POLLUTANTS = [ 'PM10', 'PM25', 'NO2', 'O3' ] ;
+$DOMAINS    = [ 'bour', 'bret', 'chp3', 'idf3',
+                'lgr3', 'nmd', 'npc', 'pcd' ] ;
+$DATADIR     = '.' ;
+
 function localDataURL ($year, $mon, $day)
 {
-    return sprintf ('/data/conc/%d%02d%02d.dat', $year, $mon, $day) ;
+    global $DATADIR ;
+    return $DATADIR . sprintf ('/%d%02d%02d.dat', $year, $mon, $day) ;
 }
 
 /* Generate URL to fetch according to date, domain and pollutant. */
@@ -50,15 +56,14 @@ function fetchSingleData ($year, $mon, $day, $dom, $pol)
 /* Fetch data for all pollutants and all stations according a given day. */
 function fetchData ($year, $mon, $day)
 {
-    $pollutants = [ 'PM10', 'PM25', 'NO2', 'O3' ] ;
-    $domains = [ 'bour', 'bret', 'chp3', 'idf3',
-                 'lgr3', 'nmd', 'npc', 'pcd' ] ;
+    global $DOMAINS ;
+    global $POLLUTANTS ;
 
     $data = [] ;
 
-    foreach ($domains as $dom)
+    foreach ($DOMAINS as $dom)
     {
-        foreach ($pollutants as $pol)
+        foreach ($POLLUTANTS as $pol)
         {
             foreach (fetchSingleData ($year, $mon, $day, $dom, $pol)
                 as $station => $conc)
@@ -104,11 +109,21 @@ function getData ($year, $mon, $day, $stations, $pollutants)
 
 function main ()
 {
-    $date = date_parse_from_format ("Y-m-d", $_GET ['d']) ;
-    $stations = explode(',', $_GET ['s']) ;
-    $pollutants = explode(',', $_GET ['p']) ;
+    global $POLLUTANTS ;
+
+    $stations = explode (',', $_GET ['s']) ;
+
+    $pollutants = (isset ($_GET ['p']) ?
+                   (explode (',', $_GET ['p'])) :
+                   $POLLUTANTS) ;
+
+    $date = date_parse_from_format ('Y-m-d', (isset ($_GET ['d']) ?
+                                              $_GET ['d'] :
+                                              (date ('Y-m-d')))) ;
+
     $data = getData ($date['year'], $date['month'], $date['day'],
                      $stations, $pollutants) ;
+
     $json = json_encode ($data) ;
     if ($json != NULL)
     {
