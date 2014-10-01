@@ -7,6 +7,16 @@
 - Save data from [[1 << esmeralda-web]].
 - Filter data and return it as JSON.
 
+== Usage ==
+
+Make a GET request with the following parameters:
+
+- ``d``: the date, formated as ``Y-m-d``
+- ``s``: comma-separated stations list.
+- ``p``: comma-separated pollutants list.
+
+Example:
+``` [...]?d=2014-10-01&s=idf3.Paris_18,idf3.Paris_12&p=PM10,NO2 ```
 
 [[1]] :: [[ http://www.esmeralda-web.fr ]]
 [[2]] :: [[ http://www.esmeralda-web.fr/images/logo.jpg ]]
