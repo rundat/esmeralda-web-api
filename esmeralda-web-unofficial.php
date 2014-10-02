@@ -130,7 +130,7 @@ function loadData ($year, $mon, $day, $stations, $pollutants)
     return $data;
 }
 
-function main ()
+function processRequest ()
 {
     global $POLLUTANTS ;
 
@@ -149,13 +149,23 @@ function main ()
     $data = loadData ($date['year'], $date['month'], $date['day'],
                       $stations, $pollutants) ;
 
-    $json = json_encode ($data) ;
-    if ($json != NULL)
+    return $data ;
+}
+
+function serveJSON ($data)
+{
+    header('Content-type: application/json') ;
+    if ($data == null)
     {
-        echo $json ;
+        print '{}' ;
+    }
+    else
+    {
+        $json = json_encode ($data) ;
+        print ($json != FALSE ? $json : '{}') ;
     }
 }
 
-main ();
+serveJSON (processRequest ()) ;
 
 ?>
