@@ -12,7 +12,7 @@ function localDataURL ($year, $mon, $day)
 }
 
 /* Generate URL to fetch according to date, domain and pollutant. */
-function dataURL ($year, $mon, $day, $dom, $pol)
+function remoteDataURL ($year, $mon, $day, $dom, $pol)
 {
     return sprintf ('http://www.esmeralda-web.fr/esmeralda/FIGS/'
                    .'%d/%02d/%d%02d%02d/GN15/conc_peak.%s.%s.txt',
@@ -20,7 +20,7 @@ function dataURL ($year, $mon, $day, $dom, $pol)
 }
 
 /* Get content return by url using curl, and retur it as string. */
-function fetchURL ($url)
+function cURL ($url)
 {
     $ch = curl_init ($url) ;
     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1) ;
@@ -31,9 +31,9 @@ function fetchURL ($url)
 
 /* Get raw data from esmeralda-web for a day / domain / pollutant.
  * Parse the result and extract values. */
-function fetchSingleData ($year, $mon, $day, $dom, $pol)
+function fetchSheet ($year, $mon, $day, $dom, $pol)
 {
-    $raw = fetchURL (dataURL ($year, $mon, $day, $dom, $pol)) ;
+    $raw = cURL (remoteDataURL ($year, $mon, $day, $dom, $pol)) ;
 
     foreach (explode ("\n", $raw) as $line)
     {
@@ -65,7 +65,7 @@ function fetchData ($year, $mon, $day)
     {
         foreach ($POLLUTANTS as $pol)
         {
-            foreach (fetchSingleData ($year, $mon, $day, $dom, $pol)
+            foreach (fetchSheet ($year, $mon, $day, $dom, $pol)
                 as $station => $conc)
             {
                 $data [$dom.'.'.$station] [$pol] = $conc ;
@@ -77,17 +77,17 @@ function fetchData ($year, $mon, $day)
 }
 
 /* Fetch data and save them on the server. */
-function saveData ($year, $mon, $day)
+function importData ($year, $mon, $day)
 {
     $data = fetchData ($year, $mon, $day) ;
     $filename = localDataURL ($year, $mon, $day) ;
     return file_put_contents ($filename, serialize ($data)) ;
 }
 
-function getData ($year, $mon, $day, $stations, $pollutants)
+function loadData ($year, $mon, $day, $stations, $pollutants)
 {
     $filename = localDataURL ($year, $mon, $day) ;
-    if (!file_exists ($filename) && !saveData ($year, $mon, $day))
+    if (!file_exists ($filename) && !importData ($year, $mon, $day))
     {
         return NULL ;
     }
@@ -144,8 +144,8 @@ function main ()
                                               $_GET ['d'] :
                                               (date ('Y-m-d')))) ;
 
-    $data = getData ($date['year'], $date['month'], $date['day'],
-                     $stations, $pollutants) ;
+    $data = loadData ($date['year'], $date['month'], $date['day'],
+                      $stations, $pollutants) ;
 
     $json = json_encode ($data) ;
     if ($json != NULL)
