@@ -46,7 +46,9 @@ function fetchSheet ($year, $mon, $day, $dom, $pol)
                     $line, $matches) ;
         if (count ($matches) == 6)
         {
-            $data [$matches[1]] = array_slice ($matches, 2) ;
+            $data [$matches[1]] =
+            array_map (function ($x) { return intval ($x) ;},
+                       array_slice ($matches, 2)) ;
         }
     }
 
