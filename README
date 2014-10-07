@@ -1,4 +1,7 @@
-= Esmeralda-web unofficial api =
+= rundat's esmeralda-web API =
+
+This is **NOT** an official API, just few functions dealing with
+[[1 << esmeralda-web]] in order to provide an API for developpers.
 
 [[2 || Esmeralda logo]]
 
